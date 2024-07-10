@@ -4,16 +4,42 @@ document.addEventListener('DOMContentLoaded', function() {
     const todoDueDate = document.getElementById('todo-due-date');
     const todoPriority = document.getElementById('todo-priority');
     const todoList = document.getElementById('todo-list');
+    const sortDateButton = document.getElementById('sort-date');
+    const sortPriorityButton = document.getElementById('sort-priority');
+    
+    let todos = [];
 
     todoForm.addEventListener('submit', function(e) {
         e.preventDefault();
-        addTodo(todoInput.value, todoDueDate.value, todoPriority.value);
+        const newTodo = {
+            task: todoInput.value,
+            dueDate: todoDueDate.value,
+            priority: todoPriority.value
+        };
+        todos.push(newTodo);
+        renderTodos();
         todoInput.value = '';
         todoDueDate.value = '';
         todoPriority.value = 'low';
     });
 
-    function addTodo(task, dueDate, priority) {
+    sortDateButton.addEventListener('click', function() {
+        todos.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+        renderTodos();
+    });
+
+    sortPriorityButton.addEventListener('click', function() {
+        const priorityOrder = { low: 1, medium: 2, high: 3 };
+        todos.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
+        renderTodos();
+    });
+
+    function renderTodos() {
+        todoList.innerHTML = '';
+        todos.forEach(todo => addTodoElement(todo));
+    }
+
+    function addTodoElement({ task, dueDate, priority }) {
         const todoItem = document.createElement('li');
         todoItem.classList.add(`priority-${priority}`);
 
@@ -37,7 +63,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const deleteButton = document.createElement('button');
         deleteButton.textContent = 'Delete';
         deleteButton.addEventListener('click', function() {
-            todoList.removeChild(todoItem);
+            todos = todos.filter(t => t.task !== task || t.dueDate !== dueDate || t.priority !== priority);
+            renderTodos();
         });
 
         todoItem.appendChild(completeButton);
