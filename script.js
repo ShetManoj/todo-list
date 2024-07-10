@@ -19,6 +19,13 @@ document.addEventListener('DOMContentLoaded', function() {
             todoList.removeChild(todoItem);
         });
 
+        const completeButton = document.createElement('button');
+        completeButton.textContent = 'Complete';
+        completeButton.addEventListener('click', function() {
+            todoItem.style.textDecoration = 'line-through';
+        });
+
+        todoItem.appendChild(completeButton);
         todoItem.appendChild(deleteButton);
         todoList.appendChild(todoItem);
     }
